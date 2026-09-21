@@ -1,5 +1,5 @@
 import pandas as pd
-from pandas.core.groupby import categorical
+
 from sklearn.model_selection import train_test_split
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
@@ -29,7 +29,7 @@ X = df.drop(columns=columns_to_remove)
 y = df["price_in_lakhs"]
 #----------------------------------------------
 numerical_f=X.select_dtypes(include=["int64", "float64"]).columns
-categorical_f=y.select_dtypes(include=["object", "category"]).columns
+categorical_f=X.select_dtypes(include=["str"]).columns
 
 # ============================================================
 # 4. NUMERICAL PIPELINE
@@ -46,7 +46,7 @@ numerical_pipeline = Pipeline([
 
 categorical_pipeline = Pipeline([
     ("imputer",SimpleImputer(strategy="most_frequent")),
-    ("onehot",OneHotEncoder())
+    ("onehot",OneHotEncoder(handle_unknown="ignore"))
 ])
 
 # ============================================================
@@ -364,7 +364,4 @@ prediction = linear_model.predict(new_house)
 
 print("\n========== HOUSE PRICE PREDICTION ==========")
 
-print(
-    f"Predicted house price: "
-    f"{prediction[0]:.2f} lakhs"
-)
+print(f"Predicted house price: "f"{prediction[0]:.2f} lakhs")
